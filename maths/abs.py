@@ -12,7 +12,7 @@ def abs_val(num: float) -> float:
     >>> abs_val(0)
     0
     """
-    return -num if num < 0 else num
+    return abs(num)
 
 
 def abs_min(x: list[int]) -> int:
@@ -28,11 +28,8 @@ def abs_min(x: list[int]) -> int:
     """
     if len(x) == 0:
         raise ValueError("abs_min() arg is an empty sequence")
-    j = x[0]
-    for i in x:
-        if abs_val(i) < abs_val(j):
-            j = i
-    return j
+    
+    return min(x, key=abs)
 
 
 def abs_max(x: list[int]) -> int:
