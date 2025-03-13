@@ -32,13 +32,11 @@ def retroactive_resolution(
     array([[-1. ],
            [ 0.5]])
     """
-
-    rows, columns = np.shape(coefficients)
-
-    x: NDArray[float64] = np.zeros((rows, 1), dtype=float)
-    for row in reversed(range(rows)):
-        total = np.dot(coefficients[row, row + 1 :], x[row + 1 :])
-        x[row, 0] = (vector[row][0] - total[0]) / coefficients[row, row]
+    rows, _ = coefficients.shape
+    x = np.empty((rows, 1), dtype=float64)
+    for row in range(rows - 1, -1, -1):
+        total = np.dot(coefficients[row, row + 1:], x[row + 1:, 0])
+        x[row, 0] = (vector[row, 0] - total) / coefficients[row, row]
 
     return x
 
@@ -67,23 +65,20 @@ def gaussian_elimination(
            [2.5]])
     """
     # coefficients must to be a square matrix so we need to check first
-    rows, columns = np.shape(coefficients)
+    rows, columns = coefficients.shape
     if rows != columns:
-        return np.array((), dtype=float)
+        return np.array([], dtype=float64)
 
     # augmented matrix
-    augmented_mat: NDArray[float64] = np.concatenate((coefficients, vector), axis=1)
-    augmented_mat = augmented_mat.astype("float64")
+    augmented_mat = np.hstack((coefficients, vector)).astype(float64)
 
     # scale the matrix leaving it triangular
     for row in range(rows - 1):
         pivot = augmented_mat[row, row]
-        for col in range(row + 1, columns):
-            factor = augmented_mat[col, row] / pivot
-            augmented_mat[col, :] -= factor * augmented_mat[row, :]
+        augmented_mat[row+1:, :] -= (augmented_mat[row+1:, row:row+1] / pivot) * augmented_mat[row, :]
 
     x = retroactive_resolution(
-        augmented_mat[:, 0:columns], augmented_mat[:, columns : columns + 1]
+        augmented_mat[:, :columns], augmented_mat[:, columns:]
     )
 
     return x
