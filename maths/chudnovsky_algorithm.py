@@ -1,4 +1,5 @@
 from decimal import Decimal, getcontext
+from functools import lru_cache
 from math import ceil, factorial
 
 
@@ -53,6 +54,13 @@ def pi(precision: int) -> str:
         exponential_term *= -262537412640768000
         partial_sum += Decimal(multinomial_term * linear_term) / exponential_term
     return str(constant_term / partial_sum)[:-1]
+
+
+@lru_cache(None)
+def factorial(n):
+    if n == 0 or n == 1:
+        return 1
+    return n * factorial(n - 1)
 
 
 if __name__ == "__main__":
