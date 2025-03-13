@@ -35,9 +35,10 @@ def to_simple_case(str_: str) -> str:
     >>> to_simple_case("special characters :, ', %, ^, $, are ignored")
     'SpecialCharactersAreIgnored'
     """
-    string_split = split_input(str_)
+    # Use non-capturing group ?: to avoid capturing unnecessary groups
+    string_split = re.split(r"[^a-zA-Z0-9\s]+", str_)
     return "".join(
-        ["".join([char.capitalize() for char in sub_str]) for sub_str in string_split]
+        (word.capitalize() for segment in string_split for word in segment.split())
     )
 
 
