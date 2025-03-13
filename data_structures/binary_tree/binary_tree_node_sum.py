@@ -17,11 +17,14 @@ class Node:
     """
     A Node has a value variable and pointers to Nodes to its left and right.
     """
-
-    def __init__(self, value: int) -> None:
+    def __init__(self, value: int, left: Node | None = None, right: Node | None = None) -> None:
         self.value = value
-        self.left: Node | None = None
-        self.right: Node | None = None
+        self.left = left
+        self.right = right
+    def __init__(self, value: int, left: Node | None = None, right: Node | None = None) -> None:
+        self.value = value
+        self.left = left
+        self.right = right
 
 
 class BinaryTreeNodeSum:
@@ -54,16 +57,19 @@ class BinaryTreeNodeSum:
     >>> sum(BinaryTreeNodeSum(tree))
     32
     """
-
     def __init__(self, tree: Node) -> None:
         self.tree = tree
 
     def depth_first_search(self, node: Node | None) -> int:
         if node is None:
             return 0
-        return node.value + (
-            self.depth_first_search(node.left) + self.depth_first_search(node.right)
-        )
+        # Directly summing values to avoid additional recursive calls
+        node_sum = node.value
+        if node.left:
+            node_sum += self.depth_first_search(node.left)
+        if node.right:
+            node_sum += self.depth_first_search(node.right)
+        return node_sum
 
     def __iter__(self) -> Iterator[int]:
         yield self.depth_first_search(self.tree)
