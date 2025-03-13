@@ -5,6 +5,8 @@ Wikipedia reference: https://en.wikipedia.org/wiki/Greatest_common_divisor
 
 gcd(a, b) = gcd(a, -b) = gcd(-a, b) = gcd(-a, -b) by definition of divisibility
 """
+from functools import lru_cache
+from math import gcd as greatest_common_divisor
 
 
 def greatest_common_divisor(a: int, b: int) -> int:
@@ -71,6 +73,15 @@ def main():
         print(f"By iterative gcd({num_1}, {num_2}) = {gcd_by_iterative(num_1, num_2)}")
     except (IndexError, UnboundLocalError, ValueError):
         print("Wrong input")
+
+
+@lru_cache(None)
+def memoized_gcd(a: int, b: int) -> int:
+    """
+    Calculate Greatest Common Divisor (GCD) with memoization.
+    Uses lru_cache to avoid recomputation
+    """
+    return greatest_common_divisor(a, b)
 
 
 if __name__ == "__main__":
