@@ -4,39 +4,40 @@ from collections import defaultdict
 
 class Heap:
     def __init__(self):
-        self.node_position = []
+        self.node_position = []  # Initialize the node position list
 
     def get_position(self, vertex):
-        return self.node_position[vertex]
+        return self.node_position[vertex]  # Get the position of the vertex
 
     def set_position(self, vertex, pos):
-        self.node_position[vertex] = pos
+        self.node_position[vertex] = pos  # Set the position of the vertex
 
     def top_to_bottom(self, heap, start, size, positions):
-        if start > size // 2 - 1:
-            return
-        else:
-            if 2 * start + 2 >= size:  # noqa: SIM114
-                smallest_child = 2 * start + 1
-            elif heap[2 * start + 1] < heap[2 * start + 2]:
-                smallest_child = 2 * start + 1
+        smallest_child = start  # Initialize smallest_child with start index
+
+        while start < size // 2:  # Loop until start is greater than half of size
+            left_child = 2 * start + 1
+            right_child = 2 * start + 2
+
+            if left_child < size and heap[left_child] < heap[smallest_child]:
+                smallest_child = left_child
+            if right_child < size and heap[right_child] < heap[smallest_child]:
+                smallest_child = right_child
+
+            if smallest_child != start:
+                # Swap heap elements and their positions
+                heap[start], heap[smallest_child] = heap[smallest_child], heap[start]
+                positions[start], positions[smallest_child] = positions[smallest_child], positions[start]
+
+                # Update node positions
+                self.node_position[positions[start]], self.node_position[positions[smallest_child]] = (
+                    self.node_position[positions[smallest_child]], self.node_position[positions[start]]
+                )
+
+                # Proceeds to check the next part of the heap
+                start = smallest_child
             else:
-                smallest_child = 2 * start + 2
-            if heap[smallest_child] < heap[start]:
-                temp, temp1 = heap[smallest_child], positions[smallest_child]
-                heap[smallest_child], positions[smallest_child] = (
-                    heap[start],
-                    positions[start],
-                )
-                heap[start], positions[start] = temp, temp1
-
-                temp = self.get_position(positions[smallest_child])
-                self.set_position(
-                    positions[smallest_child], self.get_position(positions[start])
-                )
-                self.set_position(positions[start], temp)
-
-                self.top_to_bottom(heap, smallest_child, size, positions)
+                break  # If already in correct position, break the loop
 
     # Update function if value of any node in min-heap decreases
     def bottom_to_top(self, val, index, heap, position):
@@ -70,6 +71,11 @@ class Heap:
         heap[0] = sys.maxsize
         self.top_to_bottom(heap, 0, len(heap), positions)
         return temp
+
+    def build_heap(self, heap, size, positions):
+        # Build heap by calling top_to_bottom for each node
+        for i in range(size // 2, -1, -1):
+            self.top_to_bottom(heap, i, size, positions)
 
 
 def prisms_algorithm(adjacency_list):
