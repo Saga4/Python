@@ -11,7 +11,6 @@ class Graph:
     def add_vertex(self, vertex):
         """
         Adds a vertex to the graph
-
         """
         if vertex not in self.adjacency:
             self.adjacency[vertex] = {}
@@ -20,17 +19,22 @@ class Graph:
     def add_edge(self, head, tail, weight):
         """
         Adds an edge to the graph
-
         """
-
-        self.add_vertex(head)
-        self.add_vertex(tail)
-
         if head == tail:
             return
+        
+        if head not in self.adjacency:
+            self.adjacency[head] = {}
+            self.num_vertices += 1
 
+        if tail not in self.adjacency:
+            self.adjacency[tail] = {}
+            self.num_vertices += 1
+
+        # Avoid duplicating the weight assignment
         self.adjacency[head][tail] = weight
         self.adjacency[tail][head] = weight
+        self.num_edges += 1
 
     def distinct_weight(self):
         """
