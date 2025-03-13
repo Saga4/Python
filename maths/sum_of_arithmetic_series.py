@@ -8,9 +8,8 @@ def sum_of_series(first_term: int, common_diff: int, num_of_terms: int) -> float
     >>> sum_of_series(1, 10, 100)
     49600.0
     """
-    total = (num_of_terms / 2) * (2 * first_term + (num_of_terms - 1) * common_diff)
-    # formula for sum of series
-    return total
+    # Formula for sum of series: S_n = n/2 * (2a + (n-1)d)
+    return (num_of_terms / 2) * (2 * first_term + (num_of_terms - 1) * common_diff)
 
 
 def main():
