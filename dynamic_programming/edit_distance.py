@@ -65,26 +65,23 @@ class EditDistance:
         >>> EditDistance().min_dist_bottom_up("", "")
         0
         """
-        self.word1 = word1
-        self.word2 = word2
-        m = len(word1)
-        n = len(word2)
-        self.dp = [[0 for _ in range(n + 1)] for _ in range(m + 1)]
-
-        for i in range(m + 1):
-            for j in range(n + 1):
-                if i == 0:  # first string is empty
-                    self.dp[i][j] = j
-                elif j == 0:  # second string is empty
-                    self.dp[i][j] = i
-                elif word1[i - 1] == word2[j - 1]:  # last characters are equal
-                    self.dp[i][j] = self.dp[i - 1][j - 1]
+        m, n = len(word1), len(word2)
+        
+        # Use a single dimension array to save previous rows' results
+        dp = list(range(n + 1))
+        
+        for i in range(1, m + 1):
+            prev = dp[0]  # This will initially be 0
+            dp[0] = i
+            for j in range(1, n + 1):
+                current = dp[j]
+                if word1[i - 1] == word2[j - 1]:
+                    dp[j] = prev  # dp value same as diagonal value
                 else:
-                    insert = self.dp[i][j - 1]
-                    delete = self.dp[i - 1][j]
-                    replace = self.dp[i - 1][j - 1]
-                    self.dp[i][j] = 1 + min(insert, delete, replace)
-        return self.dp[m][n]
+                    dp[j] = 1 + min(dp[j], dp[j - 1], prev)
+                prev = current
+        
+        return dp[n]
 
 
 if __name__ == "__main__":
