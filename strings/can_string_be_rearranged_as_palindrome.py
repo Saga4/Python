@@ -36,43 +36,28 @@ def can_string_be_rearranged_as_palindrome(input_str: str = "") -> bool:
     False
     >>> can_string_be_rearranged_as_palindrome("Father")
     False
-    >>> can_string_be_rearranged_as_palindrome_counter("A man a plan a canal Panama")
+    >>> can_string_be_rearranged_as_palindrome("A man a plan a canal Panama")
     True
     """
-    if len(input_str) == 0:
+    if not input_str:
         return True
     lower_case_input_str = input_str.replace(" ", "").lower()
-    # character_freq_dict: Stores the frequency of every character in the input string
-    character_freq_dict: dict[str, int] = {}
-
-    for character in lower_case_input_str:
-        character_freq_dict[character] = character_freq_dict.get(character, 0) + 1
-    """
-    Above line of code is equivalent to:
-    1) Getting the frequency of current character till previous index
-    >>> character_freq =  character_freq_dict.get(character, 0)
-    2) Incrementing the frequency of current character by 1
-    >>> character_freq = character_freq + 1
-    3) Updating the frequency of current character
-    >>> character_freq_dict[character] = character_freq
-    """
+    char_count = Counter(lower_case_input_str)
+    
     """
     OBSERVATIONS:
     Even length palindrome
-    -> Every character appears even no.of times.
+    -> Every character appears even number of times.
     Odd length palindrome
-    -> Every character appears even no.of times except for one character.
+    -> Every character appears even number of times except for one character.
     LOGIC:
-    Step 1: We'll count number of characters that appear odd number of times i.e oddChar
-    Step 2:If we find more than 1 character that appears odd number of times,
+    Step 1: We'll count number of characters that appear odd number of times i.e odd_char
+    Step 2: If we find more than 1 character that appears odd number of times,
     It is not possible to rearrange as a palindrome
     """
-    odd_char = 0
-
-    for character_count in character_freq_dict.values():
-        if character_count % 2:
-            odd_char += 1
-    return not odd_char > 1
+    
+    odd_char = sum(1 for count in char_count.values() if count % 2)
+    return odd_char <= 1
 
 
 def benchmark(input_str: str = "") -> None:
