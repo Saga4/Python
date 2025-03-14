@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import doctest
 from collections import deque
 from dataclasses import dataclass, field
 
@@ -41,10 +42,33 @@ class StackWithQueues:
         self.main_queue, self.temp_queue = self.temp_queue, self.main_queue
 
     def pop(self) -> int:
-        return self.main_queue.popleft()
+        """
+        Pops the top element from the stack.
+        """
+        if not self.queue:
+            raise IndexError("pop from an empty deque")
+        return self.queue.popleft()
 
     def peek(self) -> int | None:
         return self.main_queue[0] if self.main_queue else None
+
+    def push(self, value: int) -> None:
+        """
+        Pushes an element onto the stack.
+        Achieves O(n) time complexity where n is the number of elements
+        currently in the queue.
+        """
+        self.queue.append(value)
+        for _ in range(len(self.queue) - 1):
+            self.queue.append(self.queue.popleft())
+
+    def peek(self) -> int | None:
+        """
+        Returns the top element of the stack without removing it.
+        """
+        if not self.queue:
+            return None
+        return self.queue[0]
 
 
 if __name__ == "__main__":
