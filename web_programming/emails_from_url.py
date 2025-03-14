@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from urllib.parse import urlsplit
+
 __author__ = "Muhammad Umer Farooq"
 __license__ = "MIT"
 __version__ = "1.0.0"
@@ -57,7 +59,7 @@ def get_sub_domain_name(url: str) -> str:
     >>> get_sub_domain_name("Not a URL!")
     ''
     """
-    return parse.urlparse(url).netloc
+    return urlsplit(url).netloc
 
 
 def emails_from_url(url: str = "https://github.com") -> list[str]:
