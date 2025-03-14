@@ -3,18 +3,22 @@
 from __future__ import annotations
 
 from collections.abc import Iterator
+from doctest import testmod
 from typing import Generic, TypeVar
 
 T = TypeVar("T")
 
 
 class Node(Generic[T]):
-    def __init__(self, data: T):
+    def __init__(self, data: T, next: Node[T] = None) -> None:
         self.data = data
-        self.next: Node[T] | None = None
+        self.next = next
 
     def __str__(self) -> str:
         return f"{self.data}"
+    def __init__(self, data: T, next: Node[T] = None) -> None:
+        self.data = data
+        self.next = next
 
 
 class LinkedStack(Generic[T]):
@@ -46,9 +50,9 @@ class LinkedStack(Generic[T]):
         ...
     IndexError: pop from empty stack
     """
-
     def __init__(self) -> None:
         self.top: Node[T] | None = None
+        self._size: int = 0  # Add a size attribute for O(1) length calculation
 
     def __iter__(self) -> Iterator[T]:
         node = self.top
@@ -65,7 +69,9 @@ class LinkedStack(Generic[T]):
         >>> str(stack)
         'a->b->c'
         """
-        return "->".join([str(item) for item in self])
+        if not self.top:
+            return ""
+        return "->".join(map(str, self))  # avoids creating an intermediate list
 
     def __len__(self) -> int:
         """
@@ -157,6 +163,21 @@ class LinkedStack(Generic[T]):
         True
         """
         self.top = None
+
+    def push(self, item: T) -> None:
+        self.top = Node(item, self.top)
+        self._size += 1
+
+    def pop(self) -> T:
+        if self.top is None:
+            raise IndexError("pop from empty stack")
+        item = self.top.data
+        self.top = self.top.next
+        self._size -= 1
+        return item
+
+    def is_empty(self) -> bool:
+        return self.top is None
 
 
 if __name__ == "__main__":
