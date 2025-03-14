@@ -53,7 +53,7 @@ def sigmoid_linear_unit(vector: np.ndarray) -> np.ndarray:
 def swish(vector: np.ndarray, trainable_parameter: int) -> np.ndarray:
     """
     Parameters:
-        vector (np.ndarray): A  numpy array consisting of real values
+        vector (np.ndarray): A numpy array consisting of real values
         trainable_parameter: Use to implement various Swish Activation Functions
 
     Returns:
@@ -66,7 +66,8 @@ def swish(vector: np.ndarray, trainable_parameter: int) -> np.ndarray:
     >>> swish(np.array([-2]), 1)
     array([-0.23840584])
     """
-    return vector * sigmoid(trainable_parameter * vector)
+    # Directly apply the sigmoid function as part of the swish computation
+    return vector / (1 + np.exp(-trainable_parameter * vector))
 
 
 if __name__ == "__main__":
