@@ -35,10 +35,10 @@ def sigmoid_linear_unit(vector: np.ndarray) -> np.ndarray:
     Implements the Sigmoid Linear Unit (SiLU) or swish function
 
     Parameters:
-        vector (np.ndarray): A  numpy array consisting of real values
+        vector (np.ndarray): A numpy array consisting of real values
 
     Returns:
-        swish_vec (np.ndarray): The input numpy array, after applying swish
+        swish_vec (np.ndarray): The input numpy array after applying swish
 
     Examples:
     >>> sigmoid_linear_unit(np.array([-1.0, 1.0, 2.0]))
@@ -47,7 +47,8 @@ def sigmoid_linear_unit(vector: np.ndarray) -> np.ndarray:
     >>> sigmoid_linear_unit(np.array([-2]))
     array([-0.23840584])
     """
-    return vector * sigmoid(vector)
+    # Combined the computation to exploit numpy's element-wise operations.
+    return vector / (1 + np.exp(-vector))
 
 
 def swish(vector: np.ndarray, trainable_parameter: int) -> np.ndarray:
