@@ -86,15 +86,20 @@ def doppler_effect(
     ValueError: Non-positive frequency implies vs>v or v0>v (in the opposite direction)
     """
 
-    if wave_vel == src_vel:
+    relative_velocity = wave_vel - src_vel
+
+    if relative_velocity == 0:
         raise ZeroDivisionError(
             "Division by zero implies vs=v and observer in front of the source"
         )
-    doppler_freq = (org_freq * (wave_vel + obs_vel)) / (wave_vel - src_vel)
+    
+    doppler_freq = org_freq * (wave_vel + obs_vel) / relative_velocity
+    
     if doppler_freq <= 0:
         raise ValueError(
             "Non-positive frequency implies vs>v or v0>v (in the opposite direction)"
         )
+    
     return doppler_freq
 
 
