@@ -4,7 +4,10 @@ python/black : True
 
 from __future__ import annotations
 
+from functools import lru_cache
 
+
+@lru_cache(maxsize=None)
 def prime_factors(n: int) -> list[int]:
     """
     Returns prime factors of n as a list.
@@ -34,6 +37,9 @@ def prime_factors(n: int) -> list[int]:
     TypeError: '<=' not supported between instances of 'int' and 'list'
 
     """
+    if not isinstance(n, int) or n < 2:
+        return []
+
     i = 2
     factors = []
     while i * i <= n:
