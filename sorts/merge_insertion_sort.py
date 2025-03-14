@@ -13,25 +13,16 @@ python3 merge_insertion_sort.py
 
 from __future__ import annotations
 
+from bisect import bisect_left
+
 
 def binary_search_insertion(sorted_list, item):
     """
     >>> binary_search_insertion([1, 2, 7, 9, 10], 4)
     [1, 2, 4, 7, 9, 10]
     """
-    left = 0
-    right = len(sorted_list) - 1
-    while left <= right:
-        middle = (left + right) // 2
-        if left == right:
-            if sorted_list[middle] < item:
-                left = middle + 1
-            break
-        elif sorted_list[middle] < item:
-            left = middle + 1
-        else:
-            right = middle - 1
-    sorted_list.insert(left, item)
+    index = bisect_left(sorted_list, item)
+    sorted_list.insert(index, item)
     return sorted_list
 
 
