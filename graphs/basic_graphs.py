@@ -8,13 +8,16 @@ def _input(message):
 def initialize_unweighted_directed_graph(
     node_count: int, edge_count: int
 ) -> dict[int, list[int]]:
-    graph: dict[int, list[int]] = {}
-    for i in range(node_count):
-        graph[i + 1] = []
+    graph: dict[int, list[int]] = {i + 1: [] for i in range(node_count)}
 
-    for e in range(edge_count):
-        x, y = (int(i) for i in _input(f"Edge {e + 1}: <node1> <node2> "))
+    # Collect all edges first to minimize number of _input calls
+    edges = [_input(f"Edge {e + 1}: <node1> <node2> ") for e in range(edge_count)]
+    
+    # Populate graph adjacency list
+    for x_str, y_str in edges:
+        x, y = int(x_str), int(y_str)
         graph[x].append(y)
+    
     return graph
 
 
