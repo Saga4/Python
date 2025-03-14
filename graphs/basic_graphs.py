@@ -402,8 +402,5 @@ def find_isolated_nodes(graph):
     >>> find_isolated_nodes(graph5)
     []
     """
-    isolated = []
-    for node in graph:
-        if not graph[node]:
-            isolated.append(node)
-    return isolated
+    # Using list comprehension to gather isolated nodes in one line
+    return [node for node, edges in graph.items() if not edges]
