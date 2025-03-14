@@ -167,10 +167,9 @@ class Vector:
             ...
         Exception: Vector is empty
         """
-        if len(self.__components) == 0:
+        if not self.__components:
             raise Exception("Vector is empty")
-        squares = [c**2 for c in self.__components]
-        return math.sqrt(sum(squares))
+        return math.sqrt(sum(c * c for c in self.__components))
 
     def angle(self, other: Vector, deg: bool = False) -> float:
         """
@@ -178,15 +177,21 @@ class Vector:
 
         >>> Vector([3, 4, -1]).angle(Vector([2, -1, 1]))
         1.4906464636572374
-        >>> Vector([3, 4, -1]).angle(Vector([2, -1, 1]), deg = True)
+        >>> Vector([3, 4, -1]).angle(Vector([2, -1, 1]), deg=True)
         85.40775111366095
         >>> Vector([3, 4, -1]).angle(Vector([2, -1]))
         Traceback (most recent call last):
             ...
         Exception: invalid operand!
         """
-        num = self * other
-        den = self.euclidean_length() * other.euclidean_length()
+        if len(self.__components) != len(other.__components):
+            raise Exception("invalid operand!")
+
+        num = sum(a * b for a, b in zip(self.__components, other.__components))
+        den1 = sum(a * a for a in self.__components)
+        den2 = sum(b * b for b in other.__components)
+        den = math.sqrt(den1 * den2)
+
         if deg:
             return math.degrees(math.acos(num / den))
         else:
