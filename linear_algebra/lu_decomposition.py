@@ -24,7 +24,7 @@ import numpy as np
 
 def lower_upper_decomposition(table: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     """
-    Perform LU decomposition on a given matrix and raises an error if the matrix
+    Perform LU decomposition on a given matrix and raise an error if the matrix
     isn't square or if no such decomposition exists
 
     >>> matrix = np.array([[2, -2, 1], [0, 1, 2], [5, 3, 1]])
@@ -81,7 +81,7 @@ def lower_upper_decomposition(table: np.ndarray) -> tuple[np.ndarray, np.ndarray
     ArithmeticError: No LU decomposition exists
     """
     # Ensure that table is a square array
-    rows, columns = np.shape(table)
+    rows, columns = table.shape
     if rows != columns:
         msg = (
             "'table' has to be of square shaped array but got a "
@@ -89,22 +89,20 @@ def lower_upper_decomposition(table: np.ndarray) -> tuple[np.ndarray, np.ndarray
         )
         raise ValueError(msg)
 
-    lower = np.zeros((rows, columns))
+    lower = np.eye(rows)  # Allocate lower as an identity matrix
     upper = np.zeros((rows, columns))
 
-    # in 'total', the necessary data is extracted through slices
-    # and the sum of the products is obtained.
-
     for i in range(columns):
-        for j in range(i):
-            total = np.sum(lower[i, :i] * upper[:i, j])
-            if upper[j][j] == 0:
-                raise ArithmeticError("No LU decomposition exists")
-            lower[i][j] = (table[i][j] - total) / upper[j][j]
-        lower[i][i] = 1
         for j in range(i, columns):
-            total = np.sum(lower[i, :i] * upper[:i, j])
+            total = np.dot(lower[i, :i], upper[:i, j])
             upper[i][j] = table[i][j] - total
+
+        for j in range(i + 1, columns):
+            total = np.dot(lower[j, :i], upper[:i, i])
+            if upper[i][i] == 0:
+                raise ArithmeticError("No LU decomposition exists")
+            lower[j][i] = (table[j][i] - total) / upper[i][i]
+
     return lower, upper
 
 
