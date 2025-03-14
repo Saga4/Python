@@ -21,14 +21,14 @@ def initialize_unweighted_directed_graph(
 def initialize_unweighted_undirected_graph(
     node_count: int, edge_count: int
 ) -> dict[int, list[int]]:
-    graph: dict[int, list[int]] = {}
-    for i in range(node_count):
-        graph[i + 1] = []
+    graph = {i + 1: [] for i in range(node_count)}
 
-    for e in range(edge_count):
-        x, y = (int(i) for i in _input(f"Edge {e + 1}: <node1> <node2> "))
+    edge_inputs = [_input(f"Edge {e + 1}: <node1> <node2> ") for e in range(edge_count)]
+    for edge in edge_inputs:
+        x, y = map(int, edge)
         graph[x].append(y)
         graph[y].append(x)
+
     return graph
 
 
