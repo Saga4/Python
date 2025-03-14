@@ -22,12 +22,12 @@ def runge_kutta(f, y0, x0, h, x_end):
     >>> float(y[-1])
     148.41315904125113
     """
-    n = int(np.ceil((x_end - x0) / h))
-    y = np.zeros((n + 1,))
+    n_steps = int((x_end - x0) / h) + 1
+    y = [0] * n_steps
     y[0] = y0
     x = x0
 
-    for k in range(n):
+    for k in range(n_steps - 1):
         k1 = f(x, y[k])
         k2 = f(x + 0.5 * h, y[k] + 0.5 * h * k1)
         k3 = f(x + 0.5 * h, y[k] + 0.5 * h * k2)
