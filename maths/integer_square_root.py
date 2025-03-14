@@ -50,21 +50,18 @@ def integer_square_root(num: int) -> int:
     if num < 2:
         return num
 
-    left_bound = 0
-    right_bound = num // 2
+    left_bound, right_bound = 1, num // 2
 
     while left_bound <= right_bound:
-        mid = left_bound + (right_bound - left_bound) // 2
+        mid = (left_bound + right_bound) // 2
         mid_squared = mid * mid
-        if mid_squared == num:
-            return mid
-
-        if mid_squared < num:
-            left_bound = mid + 1
-        else:
+        
+        if mid_squared > num:
             right_bound = mid - 1
+        else:
+            left_bound = mid + 1
 
-    return right_bound
+    return left_bound - 1
 
 
 if __name__ == "__main__":
