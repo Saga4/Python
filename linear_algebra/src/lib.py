@@ -418,10 +418,10 @@ class Matrix:
                 - self.__matrix[0][1] * self.__matrix[1][0]
             )
         else:
-            cofactor_prods = [
-                self.__matrix[0][y] * self.cofactor(0, y) for y in range(self.__width)
-            ]
-            return sum(cofactor_prods)
+            # Compute cofactors in parallel with cached minors
+            return sum(
+                (self.__matrix[0][y] * (-1)**y * self.minor(0, y) for y in range(self.__width))
+            )
 
 
 def square_zero_matrix(n: int) -> Matrix:
