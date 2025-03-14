@@ -386,9 +386,9 @@ class Matrix:
         """
         if self.__height != self.__width:
             raise Exception("Matrix is not square")
-        minor = self.__matrix[:x] + self.__matrix[x + 1 :]
-        for i in range(len(minor)):
-            minor[i] = minor[i][:y] + minor[i][y + 1 :]
+        
+        minor = [row[:y] + row[y+1:] for row in (self.__matrix[:x] + self.__matrix[x+1:])]
+        
         return Matrix(minor, self.__width - 1, self.__height - 1).determinant()
 
     def cofactor(self, x: int, y: int) -> float:
@@ -418,10 +418,10 @@ class Matrix:
                 - self.__matrix[0][1] * self.__matrix[1][0]
             )
         else:
-            cofactor_prods = [
-                self.__matrix[0][y] * self.cofactor(0, y) for y in range(self.__width)
-            ]
-            return sum(cofactor_prods)
+            return sum(
+                self.__matrix[0][y] * self.cofactor(0, y)
+                for y in range(self.__width)
+            )
 
 
 def square_zero_matrix(n: int) -> Matrix:
