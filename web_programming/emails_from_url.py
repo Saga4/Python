@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from urllib.parse import urlsplit
+
 __author__ = "Muhammad Umer Farooq"
 __license__ = "MIT"
 __version__ = "1.0.0"
@@ -39,14 +41,24 @@ class Parser(HTMLParser):
 # Get main domain name (example.com)
 def get_domain_name(url: str) -> str:
     """
-    This function get the main domain name
+    This function gets the main domain name
 
     >>> get_domain_name("https://a.b.c.d/e/f?g=h,i=j#k")
     'c.d'
     >>> get_domain_name("Not a URL!")
     ''
     """
-    return ".".join(get_sub_domain_name(url).split(".")[-2:])
+    try:
+        # Extracting the network location part of the URL
+        netloc = urlsplit(url).netloc
+        if not netloc:
+            return ""
+        parts = netloc.split('.')
+        if len(parts) >= 2:
+            return ".".join(parts[-2:])
+        return netloc
+    except Exception:
+        return ""
 
 
 # Get sub domain name (sub.example.com)
