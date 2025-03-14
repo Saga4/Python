@@ -24,25 +24,31 @@ class EditDistance:
         self.dp = []
 
     def __min_dist_top_down_dp(self, m: int, n: int) -> int:
+        # Base cases
         if m == -1:
             return n + 1
-        elif n == -1:
+        if n == -1:
             return m + 1
-        elif self.dp[m][n] > -1:
+        
+        # Check if the result is already computed
+        if self.dp[m][n] >= 0:
             return self.dp[m][n]
+        
+        # If characters are the same, no operation is required
+        if self.word1[m] == self.word2[n]:
+            self.dp[m][n] = self.__min_dist_top_down_dp(m - 1, n - 1)
         else:
-            if self.word1[m] == self.word2[n]:
-                self.dp[m][n] = self.__min_dist_top_down_dp(m - 1, n - 1)
-            else:
-                insert = self.__min_dist_top_down_dp(m, n - 1)
-                delete = self.__min_dist_top_down_dp(m - 1, n)
-                replace = self.__min_dist_top_down_dp(m - 1, n - 1)
-                self.dp[m][n] = 1 + min(insert, delete, replace)
+            insert = self.__min_dist_top_down_dp(m, n - 1)
+            delete = self.__min_dist_top_down_dp(m - 1, n)
+            replace = self.__min_dist_top_down_dp(m - 1, n - 1)
+            self.dp[m][n] = 1 + min(insert, delete, replace)
 
-            return self.dp[m][n]
+        return self.dp[m][n]
 
     def min_dist_top_down(self, word1: str, word2: str) -> int:
         """
+        Calculate the minimum edit distance using top-down DP approach with memoization.
+
         >>> EditDistance().min_dist_top_down("intention", "execution")
         5
         >>> EditDistance().min_dist_top_down("intention", "")
@@ -50,10 +56,19 @@ class EditDistance:
         >>> EditDistance().min_dist_top_down("", "")
         0
         """
+        # Assign words to class variables
         self.word1 = word1
         self.word2 = word2
-        self.dp = [[-1 for _ in range(len(word2))] for _ in range(len(word1))]
+        # Handle edge cases
+        if not word1:
+            return len(word2)
+        if not word2:
+            return len(word1)
 
+        # Initialize memoization table with -1
+        self.dp = [[-1] * len(word2) for _ in range(len(word1))]
+
+        # Start the top-down approach
         return self.__min_dist_top_down_dp(len(word1) - 1, len(word2) - 1)
 
     def min_dist_bottom_up(self, word1: str, word2: str) -> int:
