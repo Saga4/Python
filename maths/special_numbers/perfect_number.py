@@ -61,7 +61,17 @@ def perfect(number: int) -> bool:
         raise ValueError("number must be an integer")
     if number <= 0:
         return False
-    return sum(i for i in range(1, number // 2 + 1) if number % i == 0) == number
+    
+    divisors_sum = 1
+    sqrt_n = int(number**0.5)
+    
+    for i in range(2, sqrt_n + 1):
+        if number % i == 0:
+            divisors_sum += i
+            if i != number // i:
+                divisors_sum += number // i
+                
+    return divisors_sum == number and number != 1
 
 
 if __name__ == "__main__":
