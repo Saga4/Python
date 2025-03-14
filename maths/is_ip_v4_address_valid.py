@@ -56,14 +56,7 @@ def is_ip_v4_address_valid(ip: str) -> bool:
         return False
 
     for octet in octets:
-        if not octet.isdigit():
-            return False
-
-        number = int(octet)
-        if len(str(number)) != len(octet):
-            return False
-
-        if not 0 <= number <= 255:
+        if not octet.isdigit() or not 0 <= int(octet) <= 255 or (octet[0] == '0' and len(octet) > 1):
             return False
 
     return True
