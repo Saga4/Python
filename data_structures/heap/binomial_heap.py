@@ -2,6 +2,7 @@
 Binomial Heap
 Reference: Advanced Data Structures, Peter Brass
 """
+import doctest
 
 
 class Node:
@@ -392,6 +393,313 @@ class BinomialHeap:
         preorder_heap = self.pre_order()
 
         return "\n".join(("-" * level + str(value)) for value, level in preorder_heap)
+
+    def insert(self, value):
+        """
+        Insert a new value into the binomial heap
+        """
+        new_node = self.Node(value)
+        temp_heap = BinomialHeap()
+        temp_heap.root = new_node
+        temp_heap.min_node = new_node
+        self.merge_heaps(temp_heap)
+        self.size += 1
+
+    def merge_heaps(self, other):
+        """
+        Combines two binomial heaps
+        """
+        self.root = self._merge_roots(self.root, other.root)
+        if self.root is None:
+            return
+        
+        prev, current, next_node = None, self.root, self.root.sibling
+        self.min_node = None
+
+        while next_node is not None:
+            if current.degree != next_node.degree or \
+               (next_node.sibling is not None and next_node.sibling.degree == current.degree):
+                prev, current = current, next_node
+            else:
+                if current.val <= next_node.val:
+                    current.sibling = next_node.sibling
+                    self._link_trees(current, next_node)
+                else:
+                    if prev is None:
+                        self.root = next_node
+                    else:
+                        prev.sibling = next_node
+                    self._link_trees(next_node, current)
+                    current = next_node
+            next_node = current.sibling
+
+            if self.min_node is None or current.val < self.min_node.val:
+                self.min_node = current
+
+    def _merge_roots(self, root1, root2):
+        """
+        Merge roots of two binomial heaps in order of their degrees
+        """
+        if root1 is None:
+            return root2
+        if root2 is None:
+            return root1
+
+        head = None
+        if root1.degree <= root2.degree:
+            head = root1
+            root1 = root1.sibling
+        else:
+            head = root2
+            root2 = root2.sibling
+
+        current = head
+        while root1 is not None and root2 is not None:
+            if root1.degree <= root2.degree:
+                current.sibling = root1
+                root1 = root1.sibling
+            else:
+                current.sibling = root2
+                root2 = root2.sibling
+            current = current.sibling
+
+        if root1 is not None:
+            current.sibling = root1
+        else:
+            current.sibling = root2
+        return head
+
+    def _link_trees(self, min_tree, other_tree):
+        """
+        Make one binomial tree a child of another
+        """
+        other_tree.parent = min_tree
+        other_tree.sibling = min_tree.child
+        min_tree.child = other_tree
+        min_tree.degree += 1
+
+    def delete_min(self):
+        """
+        Remove and return the minimum element in the binomial heap
+        """
+        if self.root is None:
+            return None
+        
+        min_prev, min_node = None, self.root
+        prev, current = None, self.root
+
+        while current.sibling is not None:
+            if current.sibling.val < min_node.val:
+                min_prev = prev
+                min_node = current.sibling
+            prev = current
+            current = current.sibling
+
+        if min_prev is None:
+            self.root = min_node.sibling
+        else:
+            min_prev.sibling = min_node.sibling
+
+        child, reverse_child = min_node.child, None
+        while child is not None:
+            next_child = child.sibling
+            child.sibling = reverse_child
+            reverse_child = child
+            child.parent = None
+            child = next_child
+
+        temp_heap = BinomialHeap()
+        temp_heap.root = reverse_child
+        self.merge_heaps(temp_heap)
+        self.size -= 1
+
+        return min_node.val
+
+    def is_empty(self):
+        """
+        Check if the heap is empty
+        """
+        return self.size == 0
+
+    def pre_order(self):
+        """
+        Return a pre-order traversal of the heap
+        """
+        result = []
+        def traverse(node, level):
+            if node is None:
+                result.append(('#', level))
+            else:
+                result.append((node.val, level))
+                traverse(node.child, level + 1)
+                traverse(node.sibling, level)
+        traverse(self.root, 0)
+        return result
+
+def __init__(self):
+    self.size = 0
+    self.root = None
+    self.min_node = None
+
+def peek(self):
+    """
+        Return min element without deleting it
+        """
+    if self.min_node is not None:
+        return self.min_node.val
+    return None
+
+def insert(self, value):
+    """
+        Insert a new value into the binomial heap
+        """
+    new_node = self.Node(value)
+    temp_heap = BinomialHeap()
+    temp_heap.root = new_node
+    temp_heap.min_node = new_node
+    self.merge_heaps(temp_heap)
+    self.size += 1
+
+def merge_heaps(self, other):
+    """
+        Combines two binomial heaps
+        """
+    self.root = self._merge_roots(self.root, other.root)
+    if self.root is None:
+        return
+    
+    prev, current, next_node = None, self.root, self.root.sibling
+    self.min_node = None
+
+    while next_node is not None:
+        if current.degree != next_node.degree or \
+               (next_node.sibling is not None and next_node.sibling.degree == current.degree):
+            prev, current = current, next_node
+        else:
+            if current.val <= next_node.val:
+                current.sibling = next_node.sibling
+                self._link_trees(current, next_node)
+            else:
+                if prev is None:
+                    self.root = next_node
+                else:
+                    prev.sibling = next_node
+                self._link_trees(next_node, current)
+                current = next_node
+        next_node = current.sibling
+
+        if self.min_node is None or current.val < self.min_node.val:
+            self.min_node = current
+
+def _merge_roots(self, root1, root2):
+    """
+        Merge roots of two binomial heaps in order of their degrees
+        """
+    if root1 is None:
+        return root2
+    if root2 is None:
+        return root1
+
+    head = None
+    if root1.degree <= root2.degree:
+        head = root1
+        root1 = root1.sibling
+    else:
+        head = root2
+        root2 = root2.sibling
+
+    current = head
+    while root1 is not None and root2 is not None:
+        if root1.degree <= root2.degree:
+            current.sibling = root1
+            root1 = root1.sibling
+        else:
+            current.sibling = root2
+            root2 = root2.sibling
+        current = current.sibling
+
+    if root1 is not None:
+        current.sibling = root1
+    else:
+        current.sibling = root2
+    return head
+
+def _link_trees(self, min_tree, other_tree):
+    """
+        Make one binomial tree a child of another
+        """
+    other_tree.parent = min_tree
+    other_tree.sibling = min_tree.child
+    min_tree.child = other_tree
+    min_tree.degree += 1
+
+def delete_min(self):
+    """
+        Remove and return the minimum element in the binomial heap
+        """
+    if self.root is None:
+        return None
+    
+    min_prev, min_node = None, self.root
+    prev, current = None, self.root
+
+    while current.sibling is not None:
+        if current.sibling.val < min_node.val:
+            min_prev = prev
+            min_node = current.sibling
+        prev = current
+        current = current.sibling
+
+    if min_prev is None:
+        self.root = min_node.sibling
+    else:
+        min_prev.sibling = min_node.sibling
+
+    child, reverse_child = min_node.child, None
+    while child is not None:
+        next_child = child.sibling
+        child.sibling = reverse_child
+        reverse_child = child
+        child.parent = None
+        child = next_child
+
+    temp_heap = BinomialHeap()
+    temp_heap.root = reverse_child
+    self.merge_heaps(temp_heap)
+    self.size -= 1
+
+    return min_node.val
+
+def is_empty(self):
+    """
+        Check if the heap is empty
+        """
+    return self.size == 0
+
+def pre_order(self):
+    """
+        Return a pre-order traversal of the heap
+        """
+    result = []
+    def traverse(node, level):
+        if node is None:
+            result.append(('#', level))
+        else:
+            result.append((node.val, level))
+            traverse(node.child, level + 1)
+            traverse(node.sibling, level)
+    traverse(self.root, 0)
+    return result
+
+def __str__(self):
+    """
+        Overwriting str for a pre-order print of nodes in heap;
+        Performance is poor, so use only for small examples
+        """
+    if self.is_empty():
+        return ""
+    pre_order_heap = self.pre_order()
+    return "\n".join(("-" * level + str(value)) for value, level in pre_order_heap)
 
 
 # Unit Tests
