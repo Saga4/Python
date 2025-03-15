@@ -68,19 +68,30 @@ def runge_kutta_gills(
     n = int((x_final - x_initial) / step_size)
     y = np.zeros(n + 1)
     y[0] = y_initial
+
+    sqrt2 = sqrt(2)
+    half_step = step_size / 2
+    coef1 = -0.5 + 1 / sqrt2
+    coef2 = 1 - 1 / sqrt2
+    coef3 = -1 / sqrt2
+    coef4 = 1 + 1 / sqrt2
+    coef5 = 2 - sqrt2
+    coef6 = 2 + sqrt2
+
     for i in range(n):
         k1 = step_size * func(x_initial, y[i])
-        k2 = step_size * func(x_initial + step_size / 2, y[i] + k1 / 2)
+        k2 = step_size * func(x_initial + half_step, y[i] + k1 / 2)
         k3 = step_size * func(
-            x_initial + step_size / 2,
-            y[i] + (-0.5 + 1 / sqrt(2)) * k1 + (1 - 1 / sqrt(2)) * k2,
+            x_initial + half_step,
+            y[i] + coef1 * k1 + coef2 * k2,
         )
         k4 = step_size * func(
-            x_initial + step_size, y[i] - (1 / sqrt(2)) * k2 + (1 + 1 / sqrt(2)) * k3
+            x_initial + step_size, y[i] + coef3 * k2 + coef4 * k3
         )
 
-        y[i + 1] = y[i] + (k1 + (2 - sqrt(2)) * k2 + (2 + sqrt(2)) * k3 + k4) / 6
+        y[i + 1] = y[i] + (k1 + coef5 * k2 + coef6 * k3 + k4) / 6
         x_initial += step_size
+
     return y
 
 
