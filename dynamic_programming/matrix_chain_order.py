@@ -10,21 +10,25 @@ Space Complexity: O(n^2)
 
 def matrix_chain_order(array):
     n = len(array)
-    matrix = [[0 for x in range(n)] for x in range(n)]
-    sol = [[0 for x in range(n)] for x in range(n)]
+    matrix = [[0] * n for _ in range(n)]
+    sol = [[0] * n for _ in range(n)]
 
     for chain_length in range(2, n):
         for a in range(1, n - chain_length + 1):
             b = a + chain_length - 1
-
             matrix[a][b] = sys.maxsize
+
+            array_a_1 = array[a - 1]
+            array_b = array[b]
+
             for c in range(a, b):
                 cost = (
-                    matrix[a][c] + matrix[c + 1][b] + array[a - 1] * array[c] * array[b]
+                    matrix[a][c] + matrix[c + 1][b] + array_a_1 * array[c] * array_b
                 )
                 if cost < matrix[a][b]:
                     matrix[a][b] = cost
                     sol[a][b] = c
+
     return matrix, sol
 
 
