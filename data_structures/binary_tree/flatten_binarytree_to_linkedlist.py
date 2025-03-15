@@ -81,29 +81,21 @@ def flatten(root: TreeNode | None) -> None:
         >>> root.right.right.right is None
         True
     """
-    if not root:
-        return
-
-    # Flatten the left subtree
-    flatten(root.left)
-
-    # Save the right subtree
-    right_subtree = root.right
-
-    # Make the left subtree the new right subtree
-    root.right = root.left
-    root.left = None
-
-    # Find the end of the new right subtree
     current = root
-    while current.right:
+
+    while current:
+        if current.left:
+            # Find the rightmost node in the left subtree
+            rightmost = current.left
+            while rightmost.right:
+                rightmost = rightmost.right
+
+            # Rewire the connections
+            rightmost.right = current.right
+            current.right = current.left
+            current.left = None
+
         current = current.right
-
-    # Append the original right subtree to the end
-    current.right = right_subtree
-
-    # Flatten the updated right subtree
-    flatten(right_subtree)
 
 
 def display_linked_list(root: TreeNode | None) -> None:
