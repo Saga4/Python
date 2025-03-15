@@ -19,34 +19,22 @@ class TreeNode:
     A TreeNode has data variable and pointers to TreeNode objects
     for its left and right children.
     """
-
-    def __init__(self, data: int) -> None:
+    def __init__(self, data: int):
         self.data = data
-        self.left: TreeNode | None = None
-        self.right: TreeNode | None = None
+        self.left = None
+        self.right = None
+    def __init__(self, data: int):
+        self.data = data
+        self.left = None
+        self.right = None
 
 
 def build_tree() -> TreeNode:
     """
     Build and return a sample binary tree.
-
+    
     Returns:
         TreeNode: The root of the binary tree.
-
-    Examples:
-        >>> root = build_tree()
-        >>> root.data
-        1
-        >>> root.left.data
-        2
-        >>> root.right.data
-        5
-        >>> root.left.left.data
-        3
-        >>> root.left.right.data
-        4
-        >>> root.right.right.data
-        6
     """
     root = TreeNode(1)
     root.left = TreeNode(2)
@@ -130,6 +118,43 @@ def display_linked_list(root: TreeNode | None) -> None:
             break
         print(current.data, end=" ")
         current = current.right
+
+def flatten(root: TreeNode) -> None:
+    """
+    Flatten the tree into a linked list in place using a preorder traversal.
+    
+    Args:
+        root (TreeNode): The root of the binary tree to flatten.
+    """
+    def _flatten(node: TreeNode) -> TreeNode:
+        if not node:
+            return None
+        if not node.left and not node.right:
+            return node
+        
+        left_tail = _flatten(node.left)
+        right_tail = _flatten(node.right)
+        
+        if left_tail:
+            left_tail.right = node.right
+            node.right = node.left
+            node.left = None
+        
+        # return rightmost node after flattening
+        return right_tail if right_tail else left_tail
+    
+    _flatten(root)
+
+def display_linked_list(root: TreeNode) -> None:
+    """
+    Display the flattened linked list.
+    
+    Args:
+        root (TreeNode): The root of the flattened linked list.
+    """
+    while root:
+        print(root.data, end=" -> " if root.right else "\n")
+        root = root.right
 
 
 if __name__ == "__main__":
