@@ -50,27 +50,24 @@ def calculate_each_score(
     for dlist, weight in zip(data_lists, weights):
         mind = min(dlist)
         maxd = max(dlist)
+        range_d = maxd - mind
 
-        score: list[float] = []
-        # for weight 0 score is 1 - actual score
-        if weight == 0:
-            for item in dlist:
-                try:
-                    score.append(1 - ((item - mind) / (maxd - mind)))
-                except ZeroDivisionError:
-                    score.append(1)
-
-        elif weight == 1:
-            for item in dlist:
-                try:
-                    score.append((item - mind) / (maxd - mind))
-                except ZeroDivisionError:
-                    score.append(0)
-
-        # weight not 0 or 1
+        if range_d == 0:
+            if weight == 0:
+                score = [1 for _ in dlist]
+            elif weight == 1:
+                score = [0 for _ in dlist]
+            else:
+                msg = f"Invalid weight of {weight:f} provided"
+                raise ValueError(msg)
         else:
-            msg = f"Invalid weight of {weight:f} provided"
-            raise ValueError(msg)
+            if weight == 0:
+                score = [1 - ((item - mind) / range_d) for item in dlist]
+            elif weight == 1:
+                score = [(item - mind) / range_d for item in dlist]
+            else:
+                msg = f"Invalid weight of {weight:f} provided"
+                raise ValueError(msg)
 
         score_lists.append(score)
 
