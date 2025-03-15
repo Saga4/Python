@@ -136,66 +136,58 @@ class BinomialHeap:
 
         # Empty heaps corner cases
         if other.size == 0:
-            return None
+            return self
         if self.size == 0:
             self.size = other.size
             self.bottom_root = other.bottom_root
             self.min_node = other.min_node
-            return None
+            return self
+        
         # Update size
-        self.size = self.size + other.size
+        self.size += other.size
 
         # Update min.node
         if self.min_node.val > other.min_node.val:
             self.min_node = other.min_node
-        # Merge
 
-        # Order roots by left_subtree_size
+        # Merge roots in non-decreasing order of left_tree_size
         combined_roots_list = []
         i, j = self.bottom_root, other.bottom_root
         while i or j:
-            if i and ((not j) or i.left_tree_size < j.left_tree_size):
+            if i and ((not j) or i.left_tree_size <= j.left_tree_size):
                 combined_roots_list.append((i, True))
                 i = i.parent
             else:
                 combined_roots_list.append((j, False))
                 j = j.parent
-        # Insert links between them
-        for i in range(len(combined_roots_list) - 1):
-            if combined_roots_list[i][1] != combined_roots_list[i + 1][1]:
-                combined_roots_list[i][0].parent = combined_roots_list[i + 1][0]
-                combined_roots_list[i + 1][0].left = combined_roots_list[i][0]
-        # Consecutively merge roots with same left_tree_size
-        i = combined_roots_list[0][0]
-        while i.parent:
-            if (
-                (i.left_tree_size == i.parent.left_tree_size) and (not i.parent.parent)
-            ) or (
-                i.left_tree_size == i.parent.left_tree_size
-                and i.left_tree_size != i.parent.parent.left_tree_size
-            ):
-                # Neighbouring Nodes
-                previous_node = i.left
-                next_node = i.parent.parent
+                
+        # Link the combined roots list
+        for k in range(1, len(combined_roots_list)):
+            combined_roots_list[k][0].left = combined_roots_list[k - 1][0]
+            combined_roots_list[k - 1][0].parent = combined_roots_list[k][0]
 
-                # Merging trees
-                i = i.merge_trees(i.parent)
-
-                # Updating links
-                i.left = previous_node
-                i.parent = next_node
-                if previous_node:
-                    previous_node.parent = i
-                if next_node:
-                    next_node.left = i
-            else:
-                i = i.parent
-        # Updating self.bottom_root
-        while i.left:
-            i = i.left
-        self.bottom_root = i
-
-        # Update other
+        # Adjust parent's links and merge roots with the same left_tree_size if needed
+        k = 0
+        while k < len(combined_roots_list) - 1:
+            i, i_next = combined_roots_list[k][0], combined_roots_list[k + 1][0]
+            if i.left_tree_size == i_next.left_tree_size:
+                k -= 1
+                if i.val < i_next.val:
+                    i.left_tree_size += i_next.tree_size
+                    i.add_child(i_next)
+                    combined_roots_list[k + 1] = (i, combined_roots_list[k + 1][1])
+                else:
+                    i_next.left_tree_size += i.tree_size
+                    i_next.add_child(i)
+                    combined_roots_list[k + 1] = (i_next, combined_roots_list[k + 1][1])
+            k += 1
+        
+        # Extract bottom_root from combined list
+        self.bottom_root = combined_roots_list[0][0]
+        while self.bottom_root.left:
+            self.bottom_root = self.bottom_root.left
+        
+        # Update other heap to refer to merged heap
         other.size = self.size
         other.bottom_root = self.bottom_root
         other.min_node = self.min_node
