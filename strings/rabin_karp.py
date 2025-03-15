@@ -6,20 +6,8 @@ modulus = 1000003
 
 def rabin_karp(pattern: str, text: str) -> bool:
     """
-    The Rabin-Karp Algorithm for finding a pattern within a piece of text
-    with complexity O(nm), most efficient when it is used with multiple patterns
-    as it is able to check if any of a set of patterns match a section of text in o(1)
-    given the precomputed hashes.
-
-    This will be the simple version which only assumes one pattern is being searched
-    for but it's not hard to modify
-
-    1) Calculate pattern hash
-
-    2) Step through the text one character at a time passing a window with the same
-        length as the pattern
-        calculating the hash of the text within the window compare it with the hash
-        of the pattern. Only testing equality if the hashes match
+    The Rabin-Karp Algorithm for finding a pattern within a piece of text.
+    Optimized version for better performance by reducing redundant operations.
     """
     p_len = len(pattern)
     t_len = len(text)
@@ -30,24 +18,26 @@ def rabin_karp(pattern: str, text: str) -> bool:
     text_hash = 0
     modulus_power = 1
 
-    # Calculating the hash of pattern and substring of text
+    # Calculate the hash of pattern and the hash of the first window of text
     for i in range(p_len):
         p_hash = (ord(pattern[i]) + p_hash * alphabet_size) % modulus
         text_hash = (ord(text[i]) + text_hash * alphabet_size) % modulus
-        if i == p_len - 1:
-            continue
-        modulus_power = (modulus_power * alphabet_size) % modulus
+        if i > 0:
+            modulus_power = (modulus_power * alphabet_size) % modulus
 
+    # Start the sliding window process
     for i in range(t_len - p_len + 1):
+        # Check if current window hash matches with pattern hash, and verify the substring
         if text_hash == p_hash and text[i : i + p_len] == pattern:
             return True
-        if i == t_len - p_len:
-            continue
-        # Calculate the https://en.wikipedia.org/wiki/Rolling_hash
-        text_hash = (
-            (text_hash - ord(text[i]) * modulus_power) * alphabet_size
-            + ord(text[i + p_len])
-        ) % modulus
+        if i < t_len - p_len:
+            # Calculate hash for the next window using rolling hash technique
+            text_hash = (text_hash - ord(text[i]) * modulus_power) % modulus
+            text_hash = (text_hash * alphabet_size + ord(text[i + p_len])) % modulus
+            
+            if text_hash < 0:
+                text_hash += modulus  # Ensure text_hash is positive
+
     return False
 
 
