@@ -105,7 +105,7 @@ def msd_radix_sort_inplace(list_of_ints: list[int]):
     if min(list_of_ints) < 0:
         raise ValueError("All numbers must be positive")
 
-    most_bits = max(len(bin(x)[2:]) for x in list_of_ints)
+    most_bits = max(list_of_ints).bit_length()
     _msd_radix_sort_inplace(list_of_ints, most_bits, 0, length)
 
 
@@ -130,29 +130,21 @@ def _msd_radix_sort_inplace(
 
     bit_position -= 1
 
-    i = begin_index
-    j = end_index - 1
-    while i <= j:
-        changed = False
-        if not (list_of_ints[i] >> bit_position) & 1:
-            # found zero at the beginning
-            i += 1
-            changed = True
-        if (list_of_ints[j] >> bit_position) & 1:
-            # found one at the end
-            j -= 1
-            changed = True
+    left = begin_index
+    right = end_index - 1
 
-        if changed:
-            continue
+    while left <= right:
+        while left <= right and not (list_of_ints[left] >> bit_position) & 1:
+            left += 1
+        while left <= right and (list_of_ints[right] >> bit_position) & 1:
+            right -= 1
+        if left < right:
+            list_of_ints[left], list_of_ints[right] = list_of_ints[right], list_of_ints[left]
+            left += 1
+            right -= 1
 
-        list_of_ints[i], list_of_ints[j] = list_of_ints[j], list_of_ints[i]
-        j -= 1
-        if j != i:
-            i += 1
-
-    _msd_radix_sort_inplace(list_of_ints, bit_position, begin_index, i)
-    _msd_radix_sort_inplace(list_of_ints, bit_position, i, end_index)
+    _msd_radix_sort_inplace(list_of_ints, bit_position, begin_index, left)
+    _msd_radix_sort_inplace(list_of_ints, bit_position, left, end_index)
 
 
 if __name__ == "__main__":
