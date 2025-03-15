@@ -78,8 +78,8 @@ def get_avg(number_1: int, number_2: int) -> int:
 
 def guess_the_number(lower: int, higher: int, to_guess: int) -> None:
     """
-    The `guess_the_number` function that guess the number by some operations
-    and using inner functions
+    The `guess_the_number` function that guesses the number by some operations
+    and uses an auxiliary function.
 
     >>> guess_the_number(10, 1000, 17)
     started...
@@ -118,32 +118,18 @@ def guess_the_number(lower: int, higher: int, to_guess: int) -> None:
             "guess value must be within the range of lower and higher value"
         )
 
-    def answer(number: int) -> str:
-        """
-        Returns value by comparing with entered `to_guess` number
-        """
-        if number > to_guess:
-            return "high"
-        elif number < to_guess:
-            return "low"
-        else:
-            return "same"
-
     print("started...")
-
-    last_lowest = lower
-    last_highest = higher
 
     last_numbers = []
 
     while True:
-        number = get_avg(last_lowest, last_highest)
+        number = get_avg(lower, higher)
         last_numbers.append(number)
 
-        if answer(number) == "low":
-            last_lowest = number
-        elif answer(number) == "high":
-            last_highest = number
+        if number < to_guess:
+            lower = number
+        elif number > to_guess:
+            higher = number
         else:
             break
 
