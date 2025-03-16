@@ -41,10 +41,20 @@ def union_set(x: Node, y: Node) -> None:
 
 def find_set(x: Node) -> Node:
     """
-    Return the parent of x
+    Return the parent of x with path compression
     """
     if x != x.parent:
-        x.parent = find_set(x.parent)
+        # Find the root and compress the path
+        root = x
+        while root != root.parent:
+            root = root.parent
+        
+        # Compress the path
+        while x != root:
+            parent = x.parent
+            x.parent = root
+            x = parent
+
     return x.parent
 
 
