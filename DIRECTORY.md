@@ -70,6 +70,8 @@
   * [Xnor Gate](boolean_algebra/xnor_gate.py)
   * [Xor Gate](boolean_algebra/xor_gate.py)
 
+## [Bubble Sort](/bubble_sort.py)
+
 ## Cellular Automata
   * [Conways Game Of Life](cellular_automata/conways_game_of_life.py)
   * [Game Of Life](cellular_automata/game_of_life.py)
