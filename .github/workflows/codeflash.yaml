@@ -33,5 +33,7 @@ jobs:
           enable-cache: true
       - name: Install Project Dependencies
         run: uv sync --all-extras
+      - name: Install CF
+        run: uv pip install codeflash
       - name: Run Codeflash to optimize code
         run: uv run codeflash
