@@ -259,3 +259,11 @@ templates_path = [ "_templates" ]
 ".rst" = "restructuredtext"
 # ".txt" = "markdown"
 ".md" = "markdown"
+
+[tool.codeflash]
+# All paths are relative to this pyproject.toml's directory.
+module-root = "."
+tests-root = "tests"
+test-framework = "pytest"
+ignore-paths = []
+formatter-cmds = ["disabled"]
