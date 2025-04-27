@@ -11,6 +11,9 @@ Examples of Carmichael Numbers: 561, 1105, ...
 https://en.wikipedia.org/wiki/Carmichael_number
 """
 
+from functools import lru_cache
+from math import gcd as greatest_common_divisor
+
 from maths.greatest_common_divisor import greatest_common_divisor
 
 
@@ -23,13 +26,16 @@ def power(x: int, y: int, mod: int) -> int:
     5
     """
 
-    if y == 0:
-        return 1
-    temp = power(x, y // 2, mod) % mod
-    temp = (temp * temp) % mod
-    if y % 2 == 1:
-        temp = (temp * x) % mod
-    return temp
+    result = 1
+    x = x % mod
+    while y > 0:
+        # If y is odd, multiply x with the current result
+        if (y & 1) == 1:
+            result = (result * x) % mod
+        # y must be even now
+        y = y >> 1  # Divide y by 2
+        x = (x * x) % mod  # Compute x^2
+    return result
 
 
 def is_carmichael_number(n: int) -> bool:
@@ -67,11 +73,19 @@ def is_carmichael_number(n: int) -> bool:
         msg = f"Number {n} must instead be a positive integer"
         raise ValueError(msg)
 
-    return all(
-        power(b, n - 1, n) == 1
-        for b in range(2, n)
-        if greatest_common_divisor(b, n) == 1
-    )
+    for b in range(2, n):
+        if memoized_gcd(b, n) == 1 and power(b, n - 1, n) != 1:
+            return False
+    return True
+
+
+@lru_cache(None)
+def memoized_gcd(a: int, b: int) -> int:
+    """
+    Calculate Greatest Common Divisor (GCD) with memoization.
+    Uses lru_cache to avoid recomputation
+    """
+    return greatest_common_divisor(a, b)
 
 
 if __name__ == "__main__":
