@@ -12,7 +12,8 @@ def abs_val(num: float) -> float:
     >>> abs_val(0)
     0
     """
-    return -num if num < 0 else num
+    # Directly returning the positive value using built-in abs
+    return abs(num)
 
 
 def abs_min(x: list[int]) -> int:
