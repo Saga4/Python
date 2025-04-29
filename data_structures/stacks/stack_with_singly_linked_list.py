@@ -3,18 +3,21 @@
 from __future__ import annotations
 
 from collections.abc import Iterator
-from typing import Generic, TypeVar
+from typing import Generic, Optional, TypeVar
 
 T = TypeVar("T")
 
 
 class Node(Generic[T]):
-    def __init__(self, data: T):
+    def __init__(self, data: T, next: Optional[Node[T]] = None) -> None:
         self.data = data
-        self.next: Node[T] | None = None
+        self.next = next
 
     def __str__(self) -> str:
         return f"{self.data}"
+    def __init__(self, data: T, next: Optional[Node[T]] = None) -> None:
+        self.data = data
+        self.next = next
 
 
 class LinkedStack(Generic[T]):
@@ -46,9 +49,9 @@ class LinkedStack(Generic[T]):
         ...
     IndexError: pop from empty stack
     """
-
     def __init__(self) -> None:
-        self.top: Node[T] | None = None
+        self.top: Optional[Node[T]] = None
+        self.size: int = 0  # Added to maintain the size of the stack for quick __len__ calculation
 
     def __iter__(self) -> Iterator[T]:
         node = self.top
@@ -131,6 +134,8 @@ class LinkedStack(Generic[T]):
 
     def peek(self) -> T:
         """
+        Return the top item without removing it.
+
         >>> stack = LinkedStack()
         >>> stack.push("Java")
         >>> stack.push("C")
@@ -138,10 +143,9 @@ class LinkedStack(Generic[T]):
         >>> stack.peek()
         'Python'
         """
-        if self.is_empty():
+        if self.top is None:
             raise IndexError("peek from empty stack")
 
-        assert self.top is not None
         return self.top.data
 
     def clear(self) -> None:
@@ -157,6 +161,42 @@ class LinkedStack(Generic[T]):
         True
         """
         self.top = None
+
+    def push(self, item: T) -> None:
+        """
+        Push an item to the top of the stack.
+
+        >>> stack = LinkedStack()
+        >>> stack.push(5)
+        >>> stack.push(15)
+        >>> stack.push(25)
+        >>> str(stack)
+        '25->15->5'
+        """
+        self.top = Node(item, self.top)
+        self.size += 1  # Increment size when an item is pushed
+
+    def pop(self) -> T:
+        """
+        Pop an item from the top of the stack.
+
+        >>> stack = LinkedStack()
+        >>> stack.push(5)
+        >>> stack.push(15)
+        >>> stack.pop()
+        15
+        >>> stack.pop()
+        5
+        >>> stack.is_empty()
+        True
+        """
+        if self.top is None:
+            raise IndexError("pop from empty stack")
+
+        node = self.top
+        self.top = self.top.next
+        self.size -= 1  # Decrement size when an item is popped
+        return node.data
 
 
 if __name__ == "__main__":
