@@ -23,16 +23,8 @@ def is_palindrome(s: str) -> bool:
     >>> all(is_palindrome(key) is value for key, value in test_data.items())
     True
     """
-
-    start_i = 0
-    end_i = len(s) - 1
-    while start_i < end_i:
-        if s[start_i] == s[end_i]:
-            start_i += 1
-            end_i -= 1
-        else:
-            return False
-    return True
+    # A direct comparison of the string and its reverse is the most efficient method
+    return s == s[::-1]
 
 
 def is_palindrome_traversal(s: str) -> bool:
@@ -85,6 +77,15 @@ def benchmark_function(name: str) -> None:
     number = 500000
     result = timeit(stmt=stmt, setup=setup, number=number)
     print(f"{name:<35} finished {number:,} runs in {result:.5f} seconds")
+
+# Dummy benchmark_function
+def benchmark_function(func_name: str):
+    import time
+    start_time = time.time()
+    for _ in range(500000):
+        for key in test_data:
+            globals()[func_name](key)
+    print(f"finished 500,000 runs in {(time.time() - start_time):.5f} seconds")
 
 
 if __name__ == "__main__":
