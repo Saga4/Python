@@ -2,7 +2,8 @@ from typing import Any
 
 
 def bubble_sort_iterative(collection: list[Any]) -> list[Any]:
-    """Pure implementation of bubble sort algorithm in Python
+    """Optimized pure implementation of bubble sort algorithm in Python using
+    Cocktail Shaker sort (bidirectional bubble sort)
 
     :param collection: some mutable ordered collection with heterogeneous
     comparable items inside
@@ -43,14 +44,24 @@ def bubble_sort_iterative(collection: list[Any]) -> list[Any]:
     True
     """
     length = len(collection)
-    for i in reversed(range(length)):
-        swapped = False
-        for j in range(i):
-            if collection[j] > collection[j + 1]:
-                swapped = True
-                collection[j], collection[j + 1] = collection[j + 1], collection[j]
-        if not swapped:
-            break  # Stop iteration if the collection is sorted.
+    start = 0
+    end = length - 1
+
+    while start < end:
+        new_end = start
+        for i in range(start, end):
+            if collection[i] > collection[i + 1]:
+                collection[i], collection[i + 1] = collection[i + 1], collection[i]
+                new_end = i
+        end = new_end
+
+        new_start = end
+        for i in range(end, start, -1):
+            if collection[i] < collection[i - 1]:
+                collection[i], collection[i - 1] = collection[i - 1], collection[i]
+                new_start = i
+        start = new_start
+
     return collection
 
 
