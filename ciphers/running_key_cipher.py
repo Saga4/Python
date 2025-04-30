@@ -29,7 +29,7 @@ def running_key_encrypt(key: str, plaintext: str) -> str:
 def running_key_decrypt(key: str, ciphertext: str) -> str:
     """
     Decrypts the ciphertext using the Running Key Cipher.
-
+    
     :param key: The running key (long piece of text).
     :param ciphertext: The ciphertext to be decrypted.
     :return: The plaintext.
@@ -37,14 +37,10 @@ def running_key_decrypt(key: str, ciphertext: str) -> str:
     ciphertext = ciphertext.replace(" ", "").upper()
     key = key.replace(" ", "").upper()
     key_length = len(key)
-    plaintext = []
     ord_a = ord("A")
 
-    for i, char in enumerate(ciphertext):
-        c = ord(char) - ord_a
-        k = ord(key[i % key_length]) - ord_a
-        p = (c - k) % 26
-        plaintext.append(chr(p + ord_a))
+    key_indices = [ord(k) - ord_a for k in key]  # Precompute the key indices
+    plaintext = [chr(((ord(ciphertext[i]) - ord_a) - key_indices[i % key_length]) % 26 + ord_a) for i in range(len(ciphertext))]
 
     return "".join(plaintext)
 
